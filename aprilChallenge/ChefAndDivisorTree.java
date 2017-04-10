@@ -7,24 +7,24 @@ import java.util.Scanner;
 public class ChefAndDivisorTree {
 
 	static class Node {
-		int data;
+		long data;
 		ArrayList<Node> children;
 		Node parent;
-		public Node(int data) {
+		public Node(long data) {
 			this.data = data;
 			children = new ArrayList<>();
 			parent = null;
 		}
 	}
 
-	static HashMap<Integer, Long> getMax = new HashMap<>();
+	static HashMap<Long, Long> getMax = new HashMap<>();
 
 	static class Pair {
 		long nodeDegree;
 		long treeMax;
 		boolean parent;
 	}
-	
+
 	public static long findMax(Node root) {
 		if(getMax.containsKey(root.data)) {
 			if(root.parent!=null) {
@@ -46,7 +46,7 @@ public class ChefAndDivisorTree {
 		} 
 		long max = Integer.MIN_VALUE;
 		for(int i=0;i<root.children.size();i++) {
-			int child = root.children.get(i).data;
+			long child = root.children.get(i).data;
 			long lol = findMax(root.children.get(i));
 			max  = Math.max(lol,max);
 		}
@@ -61,9 +61,9 @@ public class ChefAndDivisorTree {
 		return ans;
 	}
 
-	
-	
-	static HashMap<Integer, Node> getTree = new HashMap<>();
+
+
+	static HashMap<Long, Node> getTree = new HashMap<>();
 	public static void makeTree(Node n) {
 		if(getTree.containsKey(n.data)) {
 			Node temp = getTree.get(n.data);
@@ -74,7 +74,7 @@ public class ChefAndDivisorTree {
 		if(n.data==1) {
 			return;
 		}
-		ArrayList<Integer> divisors = getDivisors(n.data);
+		ArrayList<Long> divisors = getDivisors(n.data);
 		for(int i=0;i<divisors.size();i++) {
 			Node temp = new Node(divisors.get(i));
 			temp.parent=n;
@@ -84,7 +84,7 @@ public class ChefAndDivisorTree {
 		getTree.put(n.data, n);
 	}
 
-	public static long getMaxFromTree(int n) {
+	public static long getMaxFromTree(long n) {
 		if(getMax.containsKey(n)) {
 			return getMax.get(n);
 		}
@@ -94,28 +94,23 @@ public class ChefAndDivisorTree {
 		getMax.put(n, max);
 		return max;
 	}
-	static HashMap<Integer, ArrayList<Integer>> divisorsMap = new HashMap<>();
-	public static ArrayList<Integer> getDivisors(int n) {
+	
+	static HashMap<Long, ArrayList<Long>> divisorsMap = new HashMap<>();
+	public static ArrayList<Long> getDivisors(long n) {
 		if(divisorsMap.containsKey(n)) {
 			return divisorsMap.get(n);
 		}
-		ArrayList<Integer> divisors = new ArrayList<>();
-		for (int i=1; i<=Math.sqrt(n)+1; i++) {
+		ArrayList<Long> divisors = new ArrayList<>();
+		HashMap<Long, Boolean> map = new HashMap<>();
+		for (long i=1; i<=Math.sqrt(n)+1; i++) {
 			if (n%i==0) {
-				// If divisors are equal, print only one
-				if (n/i == i) {
-					if(i!=n && !divisors.contains(i)) {
-						divisors.add(i);
-					}
+				if(i!=n && !map.containsKey(i)) {
+					divisors.add(i);
+					map.put(i, true);
 				}
-
-				else {
-					if(i!=n && !divisors.contains(i)) {
-						divisors.add(i);
-					}
-					if(n/i!=n && !divisors.contains(n/i)) {
-						divisors.add(n/i);
-					}
+				if(n/i!=n && !map.containsKey(n/i)) {
+					divisors.add(n/i);
+					map.put(n/i, true);
 				}
 			}
 		}
@@ -127,14 +122,14 @@ public class ChefAndDivisorTree {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner s = new Scanner(System.in);
-		ArrayList<Integer> temp = getDivisors(12);
-		int a = s.nextInt();
-		int b = s.nextInt();
+		long a = s.nextLong();
+		long b = s.nextLong();
 		long sum = 0;
-		for(int i=a;i<=b;i++) {
+		for(long i=a;i<=b;i++) {
 			sum+=getMaxFromTree(i);
 		}
 		System.out.println(sum);
+		s.close();
 	}
 
 }
