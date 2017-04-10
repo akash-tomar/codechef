@@ -1,9 +1,15 @@
 package aprilChallenge;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class StableMarket {
-
+	static class Pair {
+		int data;
+		int freq;
+		int begin;
+		int end;
+	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner s = new Scanner(System.in);
@@ -11,37 +17,76 @@ public class StableMarket {
 		for(int t=0;t<test;t++) {
 			int n = s.nextInt();
 			int q = s.nextInt();
-			int[] arr = new int[n];
+			ArrayList<Pair> list = new ArrayList<>();
+			int prev = -1;
+			int prev_index = 0;
 			for(int i=0;i<n;i++) {
-				arr[i]=s.nextInt();
+				int temp = s.nextInt();
+				if(prev==-1) {
+					Pair p = new Pair();
+					p.data=temp;
+					p.freq=1;
+					p.begin=i;
+					p.end=p.begin;
+					prev=temp;
+					prev_index=0;
+					list.add(p);
+				} else {
+					if(temp==prev) {
+						Pair p = list.get(prev_index);
+						p.freq++;
+						p.end++;
+					} else {
+						Pair p = new Pair();
+						p.data=temp;
+						p.begin=i;
+						p.end=p.begin;
+						p.freq=1;
+						prev=temp;
+						prev_index++;
+						list.add(p);
+					}
+				}
 			}
-			for(int i=0;i<q;i++) {
+			for(int j=0;j<q;j++) {
 				int begin = s.nextInt()-1;
 				int end = s.nextInt()-1;
 				int k = s.nextInt();
-
-				int prev = arr[begin];
-				int count = 0;
 				int ans = 0;
-				for(int j=begin;j<=end;j++) {
-					if(j!=begin) {
-						if(arr[j]==prev) {
+				int counted_items = 0;
+				for(int i=0;i<list.size();i++) {
+					Pair p = list.get(i);
+					int count=0;
+					if(begin <= p.begin) {
+						if(end == p.begin) {
 							count++;
-							prev = arr[j];
-						} else {
-							if(count>=k) {
-								ans++;
-							}
-							count=1;
-							prev=arr[j];
+							counted_items++;
+						} else if(end>p.begin && end<p.end ) {
+							count+=end-p.begin+1;
+							counted_items+=end-p.begin+1;
+						} else if(end>=p.end) {
+							count+=(p.end-p.begin+1);
+							counted_items+=(p.end-p.begin+1);
 						}
-					} else {
-						count++;
+					} else if(begin>p.begin && begin<p.end ) {
+						if(end>p.begin && end<p.end ) {
+							count+=(end-begin+1);
+							counted_items+=(end-begin+1);
+						} else if(end>=p.end) {
+							count+=(p.end-begin+1);
+							counted_items+=(p.end-begin+1);
+						}
+					} else if(begin>=p.end) {
+						if(end==p.end) {
+							count++;
+							counted_items++;
+						} 
+					} 
+					if(count>=k) {
+						ans++;
 					}
-					if(j==end) {
-						if(count>=k) {
-							ans++;
-						}
+					if(counted_items>=end-begin+1) {
+						break;
 					}
 				}
 				System.out.println(ans);
