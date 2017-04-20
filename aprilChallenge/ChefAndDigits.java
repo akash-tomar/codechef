@@ -9,6 +9,8 @@ public class ChefAndDigits {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner s = new Scanner(System.in);
+		long numb = s.nextLong();
+		System.out.println(numb);
 		int t =s.nextInt();
 		for(int test =0;test<t;test++) {
 			long l = s.nextLong();
